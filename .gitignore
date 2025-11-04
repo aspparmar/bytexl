@@ -3,7 +3,10 @@ CP/
 DBMS/
 WEB/
 PROGRAMMING_LANG/
-
+.DS_Store
+logs/
+*.notes
+pattern*/
 
 # Logs
 logs
