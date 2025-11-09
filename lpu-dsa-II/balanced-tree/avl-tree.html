@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      line-height: 1.6;
+      color: #2c3e50;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #ffffff;
+    }
+    .lesson-meta {
+      color: #7f8c8d;
+      font-size: 14px;
+      margin-bottom: 8px;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+    }
+    h1 {
+      color: #2c3e50;
+      font-size: 32px;
+      margin: 10px 0 20px 0;
+    }
+    h2 {
+      color: #2c3e50;
+      font-size: 22px;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      border-left: 4px solid #3498db;
+      padding-left: 15px;
+    }
+    h3 {
+      color: #34495e;
+      font-size: 18px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+    .intro-box {
+      background-color: #ecf0f1;
+      padding: 20px;
+      border-radius: 6px;
+      margin: 20px 0;
+      border-left: 4px solid #3498db;
+    }
+    .definition-box {
+      background-color: #e8f4f8;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #3498db;
+    }
+    .key-point {
+      background-color: #fff9e6;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #f39c12;
+    }
+    .rotation-box {
+      background-color: #f0f8f0;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #27ae60;
+    }
+    .warning-box {
+      background-color: #ffe6e6;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #e74c3c;
+    }
+    .comparison-box {
+      background-color: #f3e5f5;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #9b59b6;
+    }
+    .image-placeholder {
+      background: #f0f0f0;
+      border: 2px dashed #ccc;
+      padding: 40px;
+      text-align: center;
+      margin: 20px 0;
+      border-radius: 6px;
+      color: #666;
+    }
+    .pseudocode {
+      background: #2c3e50;
+      color: #ecf0f1;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .pseudocode-title {
+      color: #3498db;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    ul, ol {
+      margin: 15px 0;
+      padding-left: 30px;
+    }
+    li {
+      margin: 8px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    th, td {
+      border: 1px solid #dee2e6;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #3498db;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f8f9fa;
+    }
+    .balance-factor {
+      display: inline-block;
+      background: #3498db;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="lesson-meta">
+  Unit 1.2: Balanced Trees | Lesson 1 of 4
+</div>
+
+<h1>AVL Trees</h1>
+
+<div class="intro-box">
+  <p><strong>AVL Trees</strong> (named after inventors Adelson-Velsky and Landis) are self-balancing Binary Search Trees that maintain a height balance property. After every insertion or deletion, the tree automatically rebalances itself to ensure that the height remains O(log n), guaranteeing efficient O(log n) operations even in worst-case scenarios.</p>
+  
+  <p>AVL trees solve the critical problem of BST degeneration. While regular BSTs can degrade to O(n) when elements are inserted in sorted order, AVL trees maintain balance through rotations, making them ideal for applications requiring predictable performance: database indexing, memory management systems, and real-time data structures.</p>
+</div>
+
+<h2>The Balance Problem in BSTs</h2>
+
+<div class="warning-box">
+  <p><strong>Why Balance Matters:</strong> Inserting sorted data [1, 2, 3, 4, 5] into a regular BST creates a right-skewed tree that behaves like a linked list. Search becomes O(n) instead of O(log n). AVL trees prevent this by enforcing strict balance constraints.</p>
+</div>
+
+<div class="image-placeholder">
+  <strong>IMAGE: Unbalanced vs Balanced Tree</strong><br>
+  Left: Skewed BST with height 5 for 5 nodes<br>
+  Right: Balanced AVL tree with height 2 for same nodes<br>
+  Color: Red for unbalanced, Green for balanced
+</div>
+
+<h2>AVL Tree Property</h2>
+
+<div class="definition-box">
+  <p><strong>Balance Factor (BF):</strong> For any node N, BF(N) = height(left subtree) - height(right subtree)</p>
+  <p><strong>AVL Invariant:</strong> For every node in the tree, the balance factor must be -1, 0, or +1</p>
+  <ul style="margin-top: 10px;">
+    <li><span class="balance-factor">BF = -1</span> Right subtree is one level deeper</li>
+    <li><span class="balance-factor">BF = 0</span> Both subtrees have equal height</li>
+    <li><span class="balance-factor">BF = +1</span> Left subtree is one level deeper</li>
+  </ul>
+  <p style="margin-top: 10px;"><strong>Violation:</strong> If |BF| > 1 at any node, the tree must be rebalanced using rotations.</p>
+</div>
+
+<div class="key-point">
+  <strong>Height Guarantee:</strong> An AVL tree with n nodes has height at most 1.44 log₂(n), ensuring all operations remain O(log n). This makes AVL trees suitable for applications where worst-case performance is critical.
+</div>
+
+<h2>Tree Rotations</h2>
+
+<p>Rotations are the key mechanism for rebalancing. They restructure the tree while preserving the BST ordering property. There are four types of rotations based on the imbalance pattern.</p>
+
+<h3>1. Left Rotation (LL Case)</h3>
+
+<div class="rotation-box">
+  <p><strong>When:</strong> Right-heavy imbalance (BF = -2) caused by insertion in right subtree's right child</p>
+  <p><strong>Action:</strong> Rotate the problematic node to the left, making its right child the new root of that subtree</p>
+</div>
+
+<div class="pseudocode">
+<div class="pseudocode-title">LEFT_ROTATE(z):</div>
+1. // z is the imbalanced node
+2. y = z.right              // y becomes new root
+3. T2 = y.left              // Store y's left subtree
+4. 
+5. // Perform rotation
+6. y.left = z               // z becomes left child of y
+7. z.right = T2             // Attach T2 as z's right child
+8. 
+9. // Update heights
+10. z.height = 1 + MAX(height(z.left), height(z.right))
+11. y.height = 1 + MAX(height(y.left), height(y.right))
+12. 
+13. RETURN y                // Return new root
+</div>
+
+<div class="image-placeholder">
+  <strong>IMAGE: Left Rotation</strong><br>
+  Before: z(root) → y(right) → x(right)<br>
+  After: y(root) → z(left) and x(right)<br>
+  Show T1, T2, T3 subtrees maintaining BST property<br>
+  Color: Blue arrows showing rotation movement
+</div>
+
+<h3>2. Right Rotation (RR Case)</h3>
+
+<div class="rotation-box">
+  <p><strong>When:</strong> Left-heavy imbalance (BF = +2) caused by insertion in left subtree's left child</p>
+  <p><strong>Action:</strong> Rotate the problematic node to the right, making its left child the new root</p>
+</div>
+
+<div class="pseudocode">
+<div class="pseudocode-title">RIGHT_ROTATE(z):</div>
+1. y = z.left               // y becomes new root
+2. T3 = y.right             // Store y's right subtree
+3. 
+4. // Perform rotation
+5. y.right = z              // z becomes right child of y
+6. z.left = T3              // Attach T3 as z's left child
+7. 
+8. // Update heights
+9. z.height = 1 + MAX(height(z.left), height(z.right))
+10. y.height = 1 + MAX(height(y.left), height(y.right))
+11. 
+12. RETURN y                // Return new root
+</div>
+
+<h3>3. Left-Right Rotation (LR Case)</h3>
+
+<div class="rotation-box">
+  <p><strong>When:</strong> Left-heavy imbalance (BF = +2) caused by insertion in left subtree's right child</p>
+  <p><strong>Action:</strong> Two-step process: left rotate the left child, then right rotate the root</p>
+</div>
+
+<div class="pseudocode">
+<div class="pseudocode-title">LEFT_RIGHT_ROTATE(z):</div>
+1. z.left = LEFT_ROTATE(z.left)   // First: left rotate left child
+2. RETURN RIGHT_ROTATE(z)          // Second: right rotate root
+3.
+4. // This converts LR case to LL case, then solves it
+</div>
+
+<h3>4. Right-Left Rotation (RL Case)</h3>
+
+<div class="rotation-box">
+  <p><strong>When:</strong> Right-heavy imbalance (BF = -2) caused by insertion in right subtree's left child</p>
+  <p><strong>Action:</strong> Two-step process: right rotate the right child, then left rotate the root</p>
+</div>
+
+<div class="pseudocode">
+<div class="pseudocode-title">RIGHT_LEFT_ROTATE(z):</div>
+1. z.right = RIGHT_ROTATE(z.right) // First: right rotate right child
+2. RETURN LEFT_ROTATE(z)           // Second: left rotate root
+3.
+4. // This converts RL case to RR case, then solves it
+</div>
+
+<div class="image-placeholder">
+  <strong>IMAGE: Four Rotation Cases</strong><br>
+  Four diagrams showing LL, RR, LR, RL imbalance patterns<br>
+  Before and after states for each rotation<br>
+  Color: Red for imbalanced nodes, Green for balanced result
+</div>
+
+<h2>AVL Insertion Algorithm</h2>
+
+<p>Insertion in AVL trees follows standard BST insertion, then rebalances the tree during the recursive unwinding phase by checking balance factors and applying rotations.</p>
+
+<div class="pseudocode">
+<div class="pseudocode-title">AVL_INSERT(node, value):</div>
+1. // Step 1: Perform standard BST insertion
+2. IF node is NULL
+3.     RETURN NEW_NODE(value)
+4. 
+5. IF value < node.data
+6.     node.left = AVL_INSERT(node.left, value)
+7. ELSE IF value > node.data
+8.     node.right = AVL_INSERT(node.right, value)
+9. ELSE
+10.    RETURN node  // Duplicate values not allowed
+11.
+12. // Step 2: Update height of current node
+13. node.height = 1 + MAX(height(node.left), height(node.right))
+14.
+15. // Step 3: Calculate balance factor
+16. balance = height(node.left) - height(node.right)
+17.
+18. // Step 4: Check for imbalance and fix
+19. // Left-Left Case
+20. IF balance > 1 AND value < node.left.data
+21.     RETURN RIGHT_ROTATE(node)
+22.
+23. // Right-Right Case
+24. IF balance < -1 AND value > node.right.data
+25.     RETURN LEFT_ROTATE(node)
+26.
+27. // Left-Right Case
+28. IF balance > 1 AND value > node.left.data
+29.     node.left = LEFT_ROTATE(node.left)
+30.     RETURN RIGHT_ROTATE(node)
+31.
+32. // Right-Left Case
+33. IF balance < -1 AND value < node.right.data
+34.     node.right = RIGHT_ROTATE(node.right)
+35.     RETURN LEFT_ROTATE(node)
+36.
+37. RETURN node  // No rebalancing needed
+</div>
+
+<div class="key-point">
+  <strong>Insertion Complexity:</strong> O(log n) time - finding insertion point takes O(log n), and rebalancing affects only O(log n) ancestors. At most two rotations are needed per insertion.
+</div>
+
+<h2>AVL Deletion Algorithm</h2>
+
+<p>Deletion is more complex than insertion. After standard BST deletion, we must rebalance all ancestors from the deleted node up to the root, potentially requiring multiple rotations.</p>
+
+<div class="pseudocode">
+<div class="pseudocode-title">AVL_DELETE(node, value):</div>
+1. // Step 1: Perform standard BST deletion
+2. IF node is NULL
+3.     RETURN node
+4. 
+5. IF value < node.data
+6.     node.left = AVL_DELETE(node.left, value)
+7. ELSE IF value > node.data
+8.     node.right = AVL_DELETE(node.right, value)
+9. ELSE
+10.    // Node to delete found
+11.    IF node has 0 or 1 child
+12.        RETURN the non-null child (or null)
+13.    ELSE
+14.        // Node has 2 children: get inorder successor
+15.        successor = FIND_MIN(node.right)
+16.        node.data = successor.data
+17.        node.right = AVL_DELETE(node.right, successor.data)
+18.
+19. // Step 2: Update height
+20. node.height = 1 + MAX(height(node.left), height(node.right))
+21.
+22. // Step 3: Get balance factor
+23. balance = height(node.left) - height(node.right)
+24.
+25. // Step 4: Rebalance (check all 4 cases)
+26. // Similar logic to insertion, but check actual subtree balance
+27. // instead of insertion position
+28.
+29. RETURN node
+</div>
+
+<div class="warning-box">
+  <strong>⚠️ Deletion vs Insertion:</strong> Unlike insertion where at most 2 rotations suffice, deletion may require O(log n) rotations as we rebalance up the tree. Each ancestor node must be checked and potentially rebalanced.
+</div>
+
+<h2>Performance Analysis</h2>
+
+<table>
+  <tr>
+    <th>Operation</th>
+    <th>Average Case</th>
+    <th>Worst Case</th>
+    <th>Notes</th>
+  </tr>
+  <tr>
+    <td>Search</td>
+    <td>O(log n)</td>
+    <td>O(log n)</td>
+    <td>Same as balanced BST</td>
+  </tr>
+  <tr>
+    <td>Insert</td>
+    <td>O(log n)</td>
+    <td>O(log n)</td>
+    <td>At most 2 rotations</td>
+  </tr>
+  <tr>
+    <td>Delete</td>
+    <td>O(log n)</td>
+    <td>O(log n)</td>
+    <td>May need O(log n) rotations</td>
+  </tr>
+  <tr>
+    <td>Space</td>
+    <td>O(n)</td>
+    <td>O(n)</td>
+    <td>Extra space for height field</td>
+  </tr>
+</table>
+
+<h2>AVL vs Regular BST</h2>
+
+<div class="comparison-box">
+  <p><strong>AVL Advantages:</strong></p>
+  <ul>
+    <li>Guaranteed O(log n) operations in all cases</li>
+    <li>More strictly balanced than Red-Black trees (faster lookups)</li>
+    <li>Suitable for lookup-intensive applications</li>
+  </ul>
+  
+  <p><strong>AVL Disadvantages:</strong></p>
+  <ul>
+    <li>More rotations during insertion/deletion (slower modifications)</li>
+    <li>Extra space for storing height at each node</li>
+    <li>More complex implementation than basic BST</li>
+  </ul>
+</div>
+
+<h2>Practical Applications</h2>
+
+<ul>
+  <li><strong>Database Indexing:</strong> MySQL InnoDB uses variants of AVL trees for in-memory index structures requiring fast lookups</li>
+  <li><strong>Memory Management:</strong> Operating systems use AVL trees in memory allocators where predictable performance is critical</li>
+  <li><strong>File Systems:</strong> AVL trees organize directory structures for efficient file lookup</li>
+  <li><strong>Network Routing:</strong> Routing tables use AVL trees for IP address lookups</li>
+  <li><strong>Autocomplete Systems:</strong> Combined with tries, AVL trees optimize prefix-based searches</li>
+</ul>
+
+<h2>Implementation Considerations</h2>
+
+<div class="definition-box">
+  <p><strong>Height Storage:</strong> Each node stores its height for O(1) balance factor calculation. Alternative: store balance factor directly (saves computation).</p>
+  <p><strong>Recursion vs Iteration:</strong> Recursive implementation is cleaner but iterative with explicit stack avoids stack overflow for very large trees.</p>
+  <p><strong>Duplicate Handling:</strong> Decide policy upfront—reject duplicates, store in left/right subtree, or use frequency counter.</p>
+</div>
+
+<div class="key-point">
+  <strong>Interview Tip:</strong> When asked to implement AVL trees, start by explaining the balance factor concept, then describe the four rotation cases with diagrams. Show you understand when each rotation applies before coding. Most interviewers prioritize understanding over complete implementation.
+</div>
+
+<h2>Common Pitfalls</h2>
+
+<ul>
+  <li><strong>Forgetting Height Updates:</strong> Always update heights after rotations and insertions</li>
+  <li><strong>Wrong Rotation Choice:</strong> Carefully check which of the 4 cases applies based on balance factors</li>
+  <li><strong>Deletion Edge Cases:</strong> Handle nodes with 0, 1, or 2 children correctly before rebalancing</li>
+  <li><strong>Balance Factor Calculation:</strong> Remember it's left height - right height, not the reverse</li>
+</ul>
+
+<h2>Next Steps</h2>
+
+<p>While AVL trees guarantee optimal balance, they can be slower for insertion-heavy workloads due to frequent rotations. Next, you'll learn about <strong>Red-Black Trees</strong>, which relax the balance constraints slightly to require fewer rotations, making them ideal for systems with frequent modifications like C++ STL map and Java TreeMap.</p>
+
+</body>
+</html>
