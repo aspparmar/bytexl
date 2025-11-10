@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      line-height: 1.6;
+      color: #2c3e50;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #ffffff;
+    }
+    .lesson-meta {
+      color: #7f8c8d;
+      font-size: 14px;
+      margin-bottom: 8px;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+    }
+    h1 {
+      color: #2c3e50;
+      font-size: 32px;
+      margin: 10px 0 20px 0;
+    }
+    h2 {
+      color: #2c3e50;
+      font-size: 22px;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      border-left: 4px solid #3498db;
+      padding-left: 15px;
+    }
+    h3 {
+      color: #34495e;
+      font-size: 18px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+    .intro-box {
+      background-color: #ecf0f1;
+      padding: 20px;
+      border-radius: 6px;
+      margin: 20px 0;
+      border-left: 4px solid #3498db;
+    }
+    .definition-box {
+      background-color: #e8f4f8;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #3498db;
+    }
+    .property-box {
+      background-color: #fff5e6;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #e67e22;
+    }
+    .key-point {
+      background-color: #fff9e6;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #f39c12;
+    }
+    .case-box {
+      background-color: #f0f8f0;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #27ae60;
+    }
+    .comparison-box {
+      background-color: #f3e5f5;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #9b59b6;
+    }
+    .warning-box {
+      background-color: #ffe6e6;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #e74c3c;
+    }
+    .image-placeholder {
+      background: #f0f0f0;
+      border: 2px dashed #ccc;
+      padding: 40px;
+      text-align: center;
+      margin: 20px 0;
+      border-radius: 6px;
+      color: #666;
+    }
+    .pseudocode {
+      background: #2c3e50;
+      color: #ecf0f1;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .pseudocode-title {
+      color: #3498db;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    ul, ol {
+      margin: 15px 0;
+      padding-left: 30px;
+    }
+    li {
+      margin: 8px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    th, td {
+      border: 1px solid #dee2e6;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #3498db;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f8f9fa;
+    }
+    .color-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 13px;
+    }
+    .red-node {
+      background: #e74c3c;
+      color: white;
+    }
+    .black-node {
+      background: #2c3e50;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+<div class="lesson-meta">
+  Unit 1.2: Balanced Trees | Lesson 2 of 4
+</div>
+
+<h1>Red-Black Trees</h1>
+
+<div class="intro-box">
+  <p><strong>Red-Black Trees</strong> are self-balancing Binary Search Trees that use a color property (red or black) to ensure the tree remains approximately balanced. Unlike AVL trees which maintain strict height balance, Red-Black trees relax the balance constraint slightly, resulting in faster insertion and deletion operations with fewer rotations.</p>
+  
+  <p>Red-Black trees are the workhorses of standard libraries: C++ STL's map/set, Java's TreeMap/TreeSet, and Linux kernel's completely fair scheduler all use Red-Black trees. They provide guaranteed O(log n) operations with better worst-case performance for modification-heavy workloads compared to AVL trees.</p>
+</div>
+
+<h2>Why Red-Black Trees?</h2>
+
+<div class="comparison-box">
+  <p><strong>AVL vs Red-Black Trade-off:</strong></p>
+  <ul>
+    <li><strong>AVL Trees:</strong> Strictly balanced (height ≤ 1.44 log n), faster lookups, but more rotations on insert/delete</li>
+    <li><strong>Red-Black Trees:</strong> Less strictly balanced (height ≤ 2 log n), slightly slower lookups, but fewer rotations (max 3 for insertion, constant recoloring)</li>
+  </ul>
+  <p><strong>Use Red-Black when:</strong> Frequent insertions/deletions are expected (databases, compilers, schedulers)</p>
+  <p><strong>Use AVL when:</strong> Lookups dominate and tree is mostly static</p>
+</div>
+
+<h2>Red-Black Properties</h2>
+
+<div class="property-box">
+  <p>A Red-Black tree must satisfy five properties at all times:</p>
+  <ol>
+    <li><strong>Node Color:</strong> Every node is either <span class="color-badge red-node">RED</span> or <span class="color-badge black-node">BLACK</span></li>
+    <li><strong>Root Property:</strong> The root is always <span class="color-badge black-node">BLACK</span></li>
+    <li><strong>Leaf Property:</strong> All leaves (NULL nodes) are considered <span class="color-badge black-node">BLACK</span></li>
+    <li><strong>Red Property:</strong> No two <span class="color-badge red-node">RED</span> nodes can be adjacent (red node cannot have red parent or red child)</li>
+    <li><strong>Black Height Property:</strong> Every path from root to leaf contains the same number of <span class="color-badge black-node">BLACK</span> nodes</li>
+  </ol>
+</div>
+
+<div class="key-point">
+  <strong>Balance Guarantee:</strong> These properties ensure that the longest path (alternating red-black) is at most twice the shortest path (all black), guaranteeing O(log n) height. This is the key insight that makes Red-Black trees work!
+</div>
+
+<div class="image-placeholder">
+  <strong>IMAGE: Valid Red-Black Tree</strong><br>
+  Tree showing nodes colored red and black<br>
+  Annotate black height on each path from root to leaves<br>
+  Color: Red nodes in red, Black nodes in dark gray/black
+</div>
+
+<h2>Black Height</h2>
+
+<div class="definition-box">
+  <p><strong>Black Height (bh):</strong> The number of black nodes on any path from a node to a leaf (not including the node itself, but including the leaf).</p>
+  <p><strong>Critical Property:</strong> A Red-Black tree with black height bh has at least 2^bh - 1 internal nodes, ensuring balanced structure.</p>
+  <p><strong>Height Bound:</strong> A Red-Black tree with n nodes has height h ≤ 2 log₂(n+1)</p>
+</div>
+
+<h2>Operations Overview</h2>
+
+<p>Red-Black tree operations maintain the five properties through two mechanisms:</p>
+<ul>
+  <li><strong>Recoloring:</strong> Changing node colors to restore properties (fast, no structural changes)</li>
+  <li><strong>Rotations:</strong> Same as AVL trees—left and right rotations to restructure (slower, but limited in number)</li>
+</ul>
+
+<h2>Insertion Algorithm</h2>
+
+<p>Insertion follows a three-step process: standard BST insertion, color the new node red, then fix violations.</p>
+
+<div class="pseudocode">
+<div class="pseudocode-title">RB_INSERT(tree, value):</div>
+1. // Step 1: Standard BST insertion
+2. new_node = BST_INSERT(tree.root, value)
+3. 
+4. // Step 2: Color the new node RED
+5. new_node.color = RED
+6. 
+7. // Step 3: Fix Red-Black violations
+8. FIX_INSERTION(tree, new_node)
+</div>
+
+<div class="warning-box">
+  <strong>⚠️ Why Insert as Red?</strong> Inserting as black would violate the black height property on all paths through the new node. Inserting as red only potentially violates the "no two adjacent reds" property, which is easier to fix locally.
+</div>
+
+<h3>Fixing Insertion Violations</h3>
+
+<p>After inserting a red node, we may violate property 4 (two adjacent reds). We have three cases based on the uncle's color:</p>
+
+<h4>Case 1: Uncle is Red (Recoloring)</h4>
+
+<div class="case-box">
+  <p><strong>Situation:</strong> New node's parent and uncle are both red</p>
+  <p><strong>Solution:</strong> Recolor parent and uncle to black, grandparent to red. Move problem up to grandparent.</p>
+  <p><strong>No rotation needed!</strong> Just recoloring propagates the problem upward.</p>
+</div>
+
+<div class="pseudocode">
+<div class="pseudocode-title">CASE 1 - Uncle is Red:</div>
+1. parent.color = BLACK
+2. uncle.color = BLACK
+3. grandparent.color = RED
+4. current = grandparent  // Continue fixing from grandparent
+5.
+6. // May need to continue up the tree
+</div>
+
+<h4>Case 2: Uncle is Black - Triangle Configuration</h4>
+
+<div class="case-box">
+  <p><strong>Situation:</strong> Uncle is black, new node forms a triangle (new node is right child of left parent, or left child of right parent)</p>
+  <p><strong>Solution:</strong> Rotate to convert to Case 3 (line configuration)</p>
+</div>
+
+<div class="pseudocode">
+<div class="pseudocode-title">CASE 2 - Triangle (Left-Right or Right-Left):</div>
+1. IF new_node is right child AND parent is left child
+2.     LEFT_ROTATE(parent)
+3.     new_node = parent  // Update reference
+4. ELSE IF new_node is left child AND parent is right child
+5.     RIGHT_ROTATE(parent)
+6.     new_node = parent
+7.
+8. // Now proceed to Case 3
+</div>
+
+<h4>Case 3: Uncle is Black - Line Configuration</h4>
+
+<div class="case-box">
+  <p><strong>Situation:</strong> Uncle is black, new node forms a line (both are left children or both are right children)</p>
+  <p><strong>Solution:</strong> Rotate at grandparent and recolor. This fixes the violation completely.</p>
+</div>
+
+<div class="pseudocode">
+<div class="pseudocode-title">CASE 3 - Line (Left-Left or Right-Right):</div>
+1. parent.color = BLACK
+2. grandparent.color = RED
+3. 
+4. IF new_node is left child
+5.     RIGHT_ROTATE(grandparent)
+6. ELSE
+7.     LEFT_ROTATE(grandparent)
+8.
+9. // Violation fixed! No further propagation needed
+</div>
+
+<div class="image-placeholder">
+  <strong>IMAGE: Three Insertion Cases</strong><br>
+  Three diagrams showing Case 1 (recolor), Case 2 (triangle rotate), Case 3 (line rotate)<br>
+  Before and after states with color changes highlighted<br>
+  Color: Red and Black nodes clearly distinguished
+</div>
+
+<div class="key-point">
+  <strong>Insertion Complexity:</strong> O(log n) time. At most 2 rotations and O(log n) recolorings. Case 1 may propagate up the tree, but Cases 2-3 terminate immediately after fixing.
+</div>
+
+<h2>Deletion Algorithm</h2>
+
+<p>Deletion is more complex than insertion. The key challenge: deleting or moving a black node can violate the black height property.</p>
+
+<div class="pseudocode">
+<div class="pseudocode-title">RB_DELETE(tree, value):</div>
+1. // Step 1: Standard BST deletion
+2. deleted_node = BST_DELETE(tree.root, value)
+3. 
+4. // Step 2: If deleted node was BLACK, fix violations
+5. IF deleted_node.color == BLACK
+6.     FIX_DELETION(tree, replacement_node)
+7.
+8. // If deleted node was RED, no violation occurs
+</div>
+
+<div class="warning-box">
+  <strong>⚠️ Double Black Concept:</strong> When a black node is deleted, its replacement is conceptually "double black"—it contributes 2 to black height. We must redistribute this extra blackness through rotations and recoloring.
+</div>
+
+<h3>Deletion Cases</h3>
+
+<p>Deletion has four main cases based on the sibling's color and children's colors. The goal is to eliminate the "double black" node.</p>
+
+<div class="case-box">
+  <p><strong>Case 1:</strong> Sibling is red → Rotate and recolor to convert to other cases</p>
+  <p><strong>Case 2:</strong> Sibling and its children are black → Recolor sibling red, move double black up</p>
+  <p><strong>Case 3:</strong> Sibling is black, far child is black, near child is red → Rotate sibling</p>
+  <p><strong>Case 4:</strong> Sibling is black, far child is red → Final rotation fixes double black</p>
+</div>
+
+<div class="pseudocode">
+<div class="pseudocode-title">FIX_DELETION - Simplified Logic:</div>
+1. WHILE current is NOT root AND current.color == BLACK
+2.     sibling = GET_SIBLING(current)
+3.     
+4.     IF sibling.color == RED
+5.         // Case 1: Convert to other cases
+6.         ROTATE and RECOLOR
+7.     
+8.     ELSE IF sibling's children are both BLACK
+9.         // Case 2: Recolor and move up
+10.        sibling.color = RED
+11.        current = current.parent
+12.    
+13.    ELSE
+14.        // Cases 3-4: Rotations to fix
+15.        HANDLE near/far child cases
+16.        BREAK  // Fixed
+17.
+18. current.color = BLACK  // Remove double black
+</div>
+
+<div class="key-point">
+  <strong>Deletion Complexity:</strong> O(log n) time. At most 3 rotations and O(log n) recolorings. More complex than insertion but still efficient.
+</div>
+
+<h2>Search Operation</h2>
+
+<p>Search is identical to standard BST search—colors don't affect lookup. The balanced height ensures O(log n) time.</p>
+
+<div class="pseudocode">
+<div class="pseudocode-title">RB_SEARCH(node, value):</div>
+1. IF node is NULL OR node.data == value
+2.     RETURN node
+3. 
+4. IF value < node.data
+5.     RETURN RB_SEARCH(node.left, value)
+6. ELSE
+7.     RETURN RB_SEARCH(node.right, value)
+8.
+9. Time: O(log n)
+10. Space: O(log n) recursion stack
+</div>
+
+<h2>Performance Comparison</h2>
+
+<table>
+  <tr>
+    <th>Operation</th>
+    <th>Red-Black Tree</th>
+    <th>AVL Tree</th>
+    <th>Notes</th>
+  </tr>
+  <tr>
+    <td>Search</td>
+    <td>O(log n)</td>
+    <td>O(log n)</td>
+    <td>AVL slightly faster (better balanced)</td>
+  </tr>
+  <tr>
+    <td>Insert</td>
+    <td>O(log n)</td>
+    <td>O(log n)</td>
+    <td>RB faster (max 2 rotations vs many)</td>
+  </tr>
+  <tr>
+    <td>Delete</td>
+    <td>O(log n)</td>
+    <td>O(log n)</td>
+    <td>RB faster (max 3 rotations vs many)</td>
+  </tr>
+  <tr>
+    <td>Height</td>
+    <td>≤ 2 log₂(n+1)</td>
+    <td>≤ 1.44 log₂(n+2)</td>
+    <td>AVL more strictly balanced</td>
+  </tr>
+</table>
+
+<h2>Practical Applications</h2>
+
+<ul>
+  <li><strong>C++ STL:</strong> std::map, std::set, std::multimap, std::multiset all use Red-Black trees</li>
+  <li><strong>Java Collections:</strong> TreeMap and TreeSet implementations</li>
+  <li><strong>Linux Kernel:</strong> Completely Fair Scheduler (CFS) uses RB trees to manage process scheduling</li>
+  <li><strong>Memory Management:</strong> Linux virtual memory areas tracked using RB trees</li>
+  <li><strong>Database Systems:</strong> PostgreSQL uses RB trees for certain index types</li>
+</ul>
+
+<div class="comparison-box">
+  <p><strong>When to Choose Red-Black Trees:</strong></p>
+  <ul>
+    <li>Frequent insertions and deletions (modification-heavy workloads)</li>
+    <li>Need guaranteed worst-case O(log n) with minimal rotations</li>
+    <li>Standard library compatibility (STL/Java integration)</li>
+    <li>Real-time systems where rotation count matters</li>
+  </ul>
+  
+  <p><strong>When to Choose AVL Trees:</strong></p>
+  <ul>
+    <li>Lookup-intensive operations (read-heavy workloads)</li>
+    <li>Need strictest possible balance</li>
+    <li>Insertions/deletions are infrequent</li>
+  </ul>
+</div>
+
+<h2>Implementation Considerations</h2>
+
+<div class="definition-box">
+  <p><strong>Color Storage:</strong> Store color as a boolean flag (1 bit conceptually, typically 1 byte in practice)</p>
+  <p><strong>Sentinel NIL:</strong> Use a single sentinel NIL node for all leaves instead of NULL—simplifies code by eliminating null checks</p>
+  <p><strong>Parent Pointers:</strong> Store parent references for easier traversal during fixing operations</p>
+</div>
+
+<div class="key-point">
+  <strong>Interview Tip:</strong> Understanding the intuition behind Red-Black properties is more important than memorizing all cases. Explain: "Red-Black trees trade strict AVL balance for fewer rotations by allowing red nodes that don't affect black height. This makes modifications faster while keeping height logarithmic."
+</div>
+
+<h2>Common Pitfalls</h2>
+
+<ul>
+  <li><strong>Forgetting Root Color:</strong> Always ensure root is black after insertions</li>
+  <li><strong>Uncle Color Check:</strong> Must check uncle exists before accessing its color</li>
+  <li><strong>Case Ordering:</strong> Process deletion cases in correct order—some cases convert to others</li>
+  <li><strong>NIL Node Handling:</strong> Consistently treat NIL nodes as black</li>
+</ul>
+
+<h2>Next Steps</h2>
+
+<p>Red-Black trees excel at general-purpose balanced tree operations, but some applications require even more specialized structures. Next, you'll explore <strong>B-Trees and B+ Trees</strong>, which extend the balancing concept to multi-way search trees optimized for disk-based storage systems and databases.</p>
+
+</body>
+</html>
