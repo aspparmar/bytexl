@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      line-height: 1.6;
+      color: #2c3e50;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #ffffff;
+    }
+    .lesson-meta {
+      color: #7f8c8d;
+      font-size: 14px;
+      margin-bottom: 8px;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+    }
+    h1 {
+      color: #2c3e50;
+      font-size: 32px;
+      margin: 10px 0 20px 0;
+    }
+    h2 {
+      color: #2c3e50;
+      font-size: 22px;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      border-left: 4px solid #3498db;
+      padding-left: 15px;
+    }
+    h3 {
+      color: #34495e;
+      font-size: 18px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+    .intro-box {
+      background-color: #ecf0f1;
+      padding: 20px;
+      border-radius: 6px;
+      margin: 20px 0;
+      border-left: 4px solid #3498db;
+    }
+    .definition-box {
+      background-color: #e8f4f8;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #3498db;
+    }
+    .property-box {
+      background-color: #fff5e6;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #e67e22;
+    }
+    .key-point {
+      background-color: #fff9e6;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #f39c12;
+    }
+    .comparison-box {
+      background-color: #f3e5f5;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #9b59b6;
+    }
+    .disk-box {
+      background-color: #e8f8f8;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #16a085;
+    }
+    .advantage-box {
+      background-color: #e8f8e8;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #27ae60;
+    }
+    .image-placeholder {
+      background: #f0f0f0;
+      border: 2px dashed #ccc;
+      padding: 40px;
+      text-align: center;
+      margin: 20px 0;
+      border-radius: 6px;
+      color: #666;
+    }
+    .pseudocode {
+      background: #2c3e50;
+      color: #ecf0f1;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .pseudocode-title {
+      color: #3498db;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    ul, ol {
+      margin: 15px 0;
+      padding-left: 30px;
+    }
+    li {
+      margin: 8px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    th, td {
+      border: 1px solid #dee2e6;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #3498db;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f8f9fa;
+    }
+    .order-badge {
+      display: inline-block;
+      background: #3498db;
+      color: white;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="lesson-meta">
+  Unit 1.2: Balanced Trees | Lesson 3 of 4
+</div>
+
+<h1>B-Trees and B+ Trees</h1>
+
+<div class="intro-box">
+  <p><strong>B-Trees</strong> are self-balancing, multi-way search trees designed for systems that read and write large blocks of data—primarily databases and file systems. Unlike binary trees where each node has at most 2 children, B-Tree nodes can have dozens or even hundreds of children, dramatically reducing tree height and minimizing disk I/O operations.</p>
+  
+  <p>B-Trees are the backbone of modern database systems: MySQL, PostgreSQL, Oracle, MongoDB, and file systems like NTFS, ext4, and HFS+ all rely on B-Trees or their variant B+ Trees. Understanding B-Trees is essential for anyone working with databases, storage systems, or building scalable data-intensive applications.</p>
+</div>
+
+<h2>Why B-Trees? The Disk I/O Problem</h2>
+
+<div class="disk-box">
+  <p><strong>The Performance Gap:</strong></p>
+  <ul>
+    <li><strong>RAM Access:</strong> ~100 nanoseconds</li>
+    <li><strong>Disk Access:</strong> ~10 milliseconds (100,000x slower!)</li>
+    <li><strong>SSD Access:</strong> ~100 microseconds (1,000x slower than RAM)</li>
+  </ul>
+  <p><strong>Critical Insight:</strong> Minimizing disk accesses is more important than minimizing comparisons. Binary trees with height log₂(n) require too many disk reads. B-Trees reduce height to log_m(n) where m can be 100+.</p>
+</div>
+
+<div class="key-point">
+  <strong>Design Philosophy:</strong> B-Trees maximize the amount of data per node to match disk block sizes (typically 4KB-64KB). A single disk read loads one node with many keys, enabling multiple comparisons without additional I/O. This trades CPU work (more comparisons) for fewer disk accesses—the right trade-off for external storage.
+</div>
+
+<h2>B-Tree Properties</h2>
+
+<div class="property-box">
+  <p>A B-Tree of order <span class="order-badge">m</span> (or degree m) satisfies:</p>
+  <ol>
+    <li><strong>Key Count:</strong> Each internal node contains k keys where ⌈m/2⌉ - 1 ≤ k ≤ m - 1</li>
+    <li><strong>Child Count:</strong> Each internal node has k+1 children (one more than keys)</li>
+    <li><strong>Root Exception:</strong> Root can have as few as 1 key (2 children) or be empty</li>
+    <li><strong>Sorted Keys:</strong> Keys in each node are sorted: key₁ < key₂ < ... < keyₖ</li>
+    <li><strong>Search Property:</strong> All keys in subtree between keyᵢ and keyᵢ₊₁ lie in that range</li>
+    <li><strong>Balanced Height:</strong> All leaf nodes are at the same level (perfectly balanced)</li>
+  </ol>
+</div>
+
+<div class="definition-box">
+  <p><strong>Order/Degree (m):</strong> The maximum number of children a node can have. Common values: m = 100-1000 for disk-based systems.</p>
+  <p><strong>Minimum Occupancy:</strong> Nodes must be at least half full (except root) to prevent excessive height and wasted space.</p>
+</div>
+
+<div class="image-placeholder">
+  <strong>IMAGE: B-Tree Structure Example</strong><br>
+  B-Tree of order 5 with multiple levels<br>
+  Show internal nodes with multiple keys and child pointers<br>
+  Label keys, child pointers, and leaf level<br>
+  Color: Blue for internal nodes, Green for leaf nodes
+</div>
+
+<h2>B-Tree Search Operation</h2>
+
+<p>Search in a B-Tree is similar to binary search but generalized to multiple keys per node.</p>
+
+<div class="pseudocode">
+<div class="pseudocode-title">B_TREE_SEARCH(node, key):</div>
+1. // Linear or binary search within the node
+2. i = 0
+3. WHILE i < node.num_keys AND key > node.keys[i]
+4.     i = i + 1
+5. 
+6. // Found the key
+7. IF i < node.num_keys AND key == node.keys[i]
+8.     RETURN (node, i)
+9. 
+10. // Key not in this node
+11. IF node is leaf
+12.     RETURN NULL  // Key not found
+13. ELSE
+14.     // Recurse to appropriate child
+15.     DISK_READ(node.children[i])
+16.     RETURN B_TREE_SEARCH(node.children[i], key)
+17.
+18. Time: O(log_m n) disk accesses
+19. Comparisons per node: O(log m) if using binary search
+20. Total time: O(log_m n × log m) = O(log n)
+</div>
+
+<div class="key-point">
+  <strong>Search Efficiency:</strong> For a B-Tree of order 1000 with 1 billion keys, height ≈ 3 (log₁₀₀₀(10⁹) ≈ 3). Only 3 disk reads needed! Compare to binary tree: log₂(10⁹) ≈ 30 disk reads.
+</div>
+
+<h2>B-Tree Insertion</h2>
+
+<p>Insertion maintains the B-Tree properties by splitting nodes that become too full. Importantly, B-Trees grow upward from the root, not downward like binary trees.</p>
+
+<h3>Insertion Process</h3>
+
+<div class="pseudocode">
+<div class="pseudocode-title">B_TREE_INSERT(tree, key):</div>
+1. // Step 1: Find the appropriate leaf node
+2. leaf = FIND_LEAF(tree.root, key)
+3. 
+4. // Step 2: Insert key into leaf
+5. IF leaf is NOT full
+6.     INSERT_INTO_NODE(leaf, key)  // Simple insertion
+7. ELSE
+8.     // Leaf is full - must split
+9.     INSERT_INTO_NODE(leaf, key)
+10.     SPLIT_NODE(leaf)
+11.
+12. // Step 3: Handle splits propagating upward
+13. IF split propagated to root AND root is full
+14.     CREATE new root
+15.     SPLIT old root
+16.     tree.height = tree.height + 1  // Tree grows upward!
+</div>
+
+<h3>Node Splitting</h3>
+
+<div class="pseudocode">
+<div class="pseudocode-title">SPLIT_NODE(node):</div>
+1. // Node has m keys (overfull by 1)
+2. median_index = m / 2
+3. median_key = node.keys[median_index]
+4. 
+5. // Create new sibling node
+6. sibling = NEW_NODE()
+7. 
+8. // Move upper half keys to sibling
+9. MOVE keys[median_index+1 to m] to sibling
+10. MOVE corresponding children to sibling
+11.
+12. // Push median key up to parent
+13. INSERT median_key into parent
+14. ADD sibling as parent's child
+15.
+16. // If parent becomes full, recursively split
+17. IF parent is full
+18.     SPLIT_NODE(parent)
+</div>
+
+<div class="image-placeholder">
+  <strong>IMAGE: B-Tree Node Split</strong><br>
+  Show node with 5 keys splitting into two nodes<br>
+  Middle key moves up to parent<br>
+  Arrows showing data movement<br>
+  Color: Yellow for splitting node, Green for new nodes
+</div>
+
+<div class="key-point">
+  <strong>Insertion Complexity:</strong> O(log_m n) disk I/O operations. Splits are infrequent due to high node capacity—most insertions don't cause splits. When splits occur, they're local and fast.
+</div>
+
+<h2>B-Tree Deletion</h2>
+
+<p>Deletion is more complex, requiring handling of underflow (nodes becoming too empty) through redistribution or merging.</p>
+
+<h3>Deletion Cases</h3>
+
+<div class="pseudocode">
+<div class="pseudocode-title">B_TREE_DELETE(node, key):</div>
+1. // Case 1: Key is in leaf node
+2. IF node is leaf AND key is in node
+3.     REMOVE key from node
+4.     IF node becomes underfull
+5.         FIX_UNDERFLOW(node)
+6. 
+7. // Case 2: Key is in internal node
+8. ELSE IF key is in internal node
+9.     REPLACE key with predecessor or successor
+10.    DELETE predecessor/successor from child
+11.    IF child becomes underfull
+12.        FIX_UNDERFLOW(child)
+13.
+14. // Case 3: Key not in node, recurse
+15. ELSE
+16.    child = FIND_APPROPRIATE_CHILD(node, key)
+17.    B_TREE_DELETE(child, key)
+</div>
+
+<h3>Fixing Underflow</h3>
+
+<div class="pseudocode">
+<div class="pseudocode-title">FIX_UNDERFLOW(node):</div>
+1. sibling = GET_SIBLING(node)  // Left or right
+2. 
+3. // Case 1: Sibling has extra keys - redistribute
+4. IF sibling has more than minimum keys
+5.     BORROW key from sibling
+6.     UPDATE parent key
+7. 
+8. // Case 2: Sibling has minimum keys - merge
+9. ELSE
+10.    MERGE node with sibling
+11.    PULL DOWN parent key
+12.    IF parent becomes underfull
+13.        FIX_UNDERFLOW(parent)  // Propagate upward
+</div>
+
+<h2>B+ Trees: The Database Standard</h2>
+
+<div class="definition-box">
+  <p><strong>B+ Trees</strong> are a variant of B-Trees optimized for range queries and sequential access. They differ in three key ways:</p>
+  <ul>
+    <li><strong>Data Location:</strong> All data records stored only in leaf nodes (internal nodes store only keys for navigation)</li>
+    <li><strong>Leaf Linking:</strong> Leaf nodes are linked in a doubly-linked list for efficient range scans</li>
+    <li><strong>Key Duplication:</strong> Keys in internal nodes are duplicated in leaves for consistent navigation</li>
+  </ul>
+</div>
+
+<div class="image-placeholder">
+  <strong>IMAGE: B+ Tree Structure</strong><br>
+  Show internal nodes with only keys (no data)<br>
+  Leaf level with data and horizontal pointers linking leaves<br>
+  Highlight linked list at leaf level<br>
+  Color: Blue for internal, Green for leaves with connections
+</div>
+
+<h3>B+ Tree Advantages</h3>
+
+<div class="advantage-box">
+  <p><strong>Why B+ Trees Dominate Databases:</strong></p>
+  <ul>
+    <li><strong>Better Fan-out:</strong> Internal nodes have no data, only keys → more keys per node → shorter tree</li>
+    <li><strong>Efficient Range Queries:</strong> Leaf links enable fast sequential access without tree traversal</li>
+    <li><strong>Full Leaf Scans:</strong> Can iterate all records by following leaf pointers (used in full table scans)</li>
+    <li><strong>Consistent Performance:</strong> All searches go to leaf level, uniform access time</li>
+  </ul>
+</div>
+
+<h2>B+ Tree Operations</h2>
+
+<h3>Search in B+ Tree</h3>
+
+<div class="pseudocode">
+<div class="pseudocode-title">B_PLUS_SEARCH(root, key):</div>
+1. node = root
+2. 
+3. // Navigate down to leaf level
+4. WHILE node is NOT leaf
+5.     i = FIND_INDEX(node, key)  // Which child to follow
+6.     node = node.children[i]
+7.     DISK_READ(node)
+8. 
+9. // Search in leaf node
+10. IF key is in node
+11.     RETURN node.data[key]
+12. ELSE
+13.     RETURN NULL
+14.
+15. Time: O(log_m n) disk I/O
+</div>
+
+<h3>Range Query in B+ Tree</h3>
+
+<div class="pseudocode">
+<div class="pseudocode-title">RANGE_QUERY(tree, start_key, end_key):</div>
+1. // Find starting leaf
+2. leaf = B_PLUS_SEARCH(tree.root, start_key)
+3. 
+4. // Follow leaf links until end_key
+5. results = []
+6. WHILE leaf is NOT NULL AND leaf.key <= end_key
+7.     ADD matching records from leaf to results
+8.     leaf = leaf.next  // Follow leaf link (no tree traversal!)
+9. 
+10. RETURN results
+11.
+12. Time: O(log_m n + k) where k = result size
+13. Efficient: No repeated tree traversals!
+</div>
+
+<div class="key-point">
+  <strong>Range Query Power:</strong> Query "SELECT * FROM users WHERE age BETWEEN 25 AND 35" becomes: find first matching leaf, then scan forward via links. No tree navigation needed! This is why databases love B+ Trees.
+</div>
+
+<h2>Performance Comparison</h2>
+
+<table>
+  <tr>
+    <th>Feature</th>
+    <th>B-Tree</th>
+    <th>B+ Tree</th>
+  </tr>
+  <tr>
+    <td>Data Location</td>
+    <td>All nodes</td>
+    <td>Leaf nodes only</td>
+  </tr>
+  <tr>
+    <td>Internal Node Size</td>
+    <td>Smaller fan-out</td>
+    <td>Larger fan-out (keys only)</td>
+  </tr>
+  <tr>
+    <td>Search Time</td>
+    <td>O(log_m n)</td>
+    <td>O(log_m n)</td>
+  </tr>
+  <tr>
+    <td>Range Queries</td>
+    <td>Slow (tree traversal)</td>
+    <td>Fast (leaf links)</td>
+  </tr>
+  <tr>
+    <td>Sequential Access</td>
+    <td>Requires traversal</td>
+    <td>Follow leaf pointers</td>
+  </tr>
+  <tr>
+    <td>Best Use Case</td>
+    <td>General indexing</td>
+    <td>Database indexing</td>
+  </tr>
+</table>
+
+<h2>Real-World Applications</h2>
+
+<div class="comparison-box">
+  <p><strong>Database Systems:</strong></p>
+  <ul>
+    <li><strong>MySQL InnoDB:</strong> B+ Trees for primary and secondary indexes</li>
+    <li><strong>PostgreSQL:</strong> B-Tree indexes (default index type)</li>
+    <li><strong>Oracle:</strong> B+ Tree variants for table organization</li>
+    <li><strong>MongoDB:</strong> B-Trees for index structures</li>
+  </ul>
+  
+  <p><strong>File Systems:</strong></p>
+  <ul>
+    <li><strong>NTFS (Windows):</strong> B+ Trees for file metadata</li>
+    <li><strong>ext4 (Linux):</strong> HTree (B-Tree variant) for directory indexing</li>
+    <li><strong>HFS+ (macOS):</strong> B-Trees for catalog files</li>
+    <li><strong>Btrfs:</strong> B-Trees for all metadata</li>
+  </ul>
+</div>
+
+<h2>Choosing the Right Order</h2>
+
+<div class="disk-box">
+  <p><strong>Order Selection Strategy:</strong></p>
+  <ul>
+    <li><strong>Match Block Size:</strong> Choose m so node fits in one disk block (4KB-64KB typical)</li>
+    <li><strong>Key/Pointer Size:</strong> If key = 8 bytes, pointer = 8 bytes, block = 4KB → m ≈ 256</li>
+    <li><strong>Trade-offs:</strong> Larger m → shorter tree (fewer I/O) but more CPU comparisons per node</li>
+    <li><strong>Practical Values:</strong> m = 50-1000 common in production databases</li>
+  </ul>
+</div>
+
+<h2>Implementation Considerations</h2>
+
+<ul>
+  <li><strong>Buffer Management:</strong> Keep frequently accessed nodes (especially upper levels) in RAM cache</li>
+  <li><strong>Concurrency:</strong> Use lock-coupling or latching to allow concurrent access</li>
+  <li><strong>Compression:</strong> Compress keys within nodes to increase fan-out</li>
+  <li><strong>Bulk Loading:</strong> Build B-Trees bottom-up for initial load efficiency</li>
+</ul>
+
+<div class="key-point">
+  <strong>Interview Tip:</strong> When discussing B-Trees, emphasize the disk I/O perspective: "B-Trees minimize disk accesses by maximizing keys per node. The key insight is trading CPU work for reduced I/O—the right optimization for external storage where disk access dominates performance."
+</div>
+
+<h2>Next Steps</h2>
+
+<p>B-Trees optimize for disk access, but other data structures optimize for different domains. Next, you'll explore <strong>Splay Trees</strong>, which use a fascinating self-adjusting mechanism to bring frequently accessed items closer to the root—ideal for cache-like access patterns without explicit balancing operations.</p>
+
+</body>
+</html>

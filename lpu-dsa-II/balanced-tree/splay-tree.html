@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      line-height: 1.6;
+      color: #2c3e50;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #ffffff;
+    }
+    .lesson-meta {
+      color: #7f8c8d;
+      font-size: 14px;
+      margin-bottom: 8px;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+    }
+    h1 {
+      color: #2c3e50;
+      font-size: 32px;
+      margin: 10px 0 20px 0;
+    }
+    h2 {
+      color: #2c3e50;
+      font-size: 22px;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      border-left: 4px solid #3498db;
+      padding-left: 15px;
+    }
+    h3 {
+      color: #34495e;
+      font-size: 18px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+    .intro-box {
+      background-color: #ecf0f1;
+      padding: 20px;
+      border-radius: 6px;
+      margin: 20px 0;
+      border-left: 4px solid #3498db;
+    }
+    .definition-box {
+      background-color: #e8f4f8;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #3498db;
+    }
+    .key-point {
+      background-color: #fff9e6;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #f39c12;
+    }
+    .rotation-box {
+      background-color: #f0f8f0;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #27ae60;
+    }
+    .comparison-box {
+      background-color: #f3e5f5;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #9b59b6;
+    }
+    .advantage-box {
+      background-color: #e8f8e8;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #27ae60;
+    }
+    .warning-box {
+      background-color: #ffe6e6;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #e74c3c;
+    }
+    .image-placeholder {
+      background: #f0f0f0;
+      border: 2px dashed #ccc;
+      padding: 40px;
+      text-align: center;
+      margin: 20px 0;
+      border-radius: 6px;
+      color: #666;
+    }
+    .pseudocode {
+      background: #2c3e50;
+      color: #ecf0f1;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .pseudocode-title {
+      color: #3498db;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    ul, ol {
+      margin: 15px 0;
+      padding-left: 30px;
+    }
+    li {
+      margin: 8px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    th, td {
+      border: 1px solid #dee2e6;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #3498db;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f8f9fa;
+    }
+  </style>
+</head>
+<body>
+
+<div class="lesson-meta">
+  Unit 1.2: Balanced Trees | Lesson 4 of 4
+</div>
+
+<h1>Splay Trees</h1>
+
+<div class="intro-box">
+  <p><strong>Splay Trees</strong> are self-adjusting binary search trees that use a fascinating "move-to-root" strategy called splaying. Every time a node is accessed (search, insert, delete), it's moved to the root through a series of rotations. This simple heuristic provides excellent amortized performance and automatically adapts to access patterns—frequently accessed items naturally stay near the root.</p>
+  
+  <p>Unlike AVL and Red-Black trees that maintain strict balance invariants, Splay Trees have no balance constraints. They rely on the splaying operation to keep the tree reasonably balanced over sequences of operations. This simplicity makes them easier to implement while providing powerful cache-like behavior for real-world access patterns.</p>
+</div>
+
+<h2>The Self-Adjusting Philosophy</h2>
+
+<div class="key-point">
+  <strong>Core Idea:</strong> If you just accessed a node, you're likely to access it again soon (temporal locality). By moving it to the root, subsequent accesses become O(1). Even if this makes the tree temporarily unbalanced, the amortized cost over many operations remains O(log n).
+</div>
+
+<div class="advantage-box">
+  <p><strong>Why Splay Trees Excel:</strong></p>
+  <ul>
+    <li><strong>Adaptive:</strong> Automatically adjusts to access patterns without explicit profiling</li>
+    <li><strong>Simple:</strong> No color bits, balance factors, or complex rebalancing rules</li>
+    <li><strong>Cache-Friendly:</strong> Hot data stays near root, cold data drifts down</li>
+    <li><strong>Amortized O(log n):</strong> Any sequence of m operations takes O(m log n) total time</li>
+  </ul>
+</div>
+
+<h2>Splaying Operation</h2>
+
+<p>Splaying moves a target node to the root through a sequence of rotations. The key insight: use double rotations (operating on node, parent, and grandparent) instead of single rotations to prevent creating degenerate trees.</p>
+
+<h3>Three Splaying Cases</h3>
+
+<div class="rotation-box">
+  <p><strong>Case 1: Zig (Node has no grandparent)</strong></p>
+  <p>Node's parent is the root. Perform a single rotation.</p>
+  <p><strong>When:</strong> Last step when node's parent is root</p>
+  <p><strong>Action:</strong> Single left or right rotation</p>
+</div>
+
+<div class="pseudocode">
+<div class="pseudocode-title">ZIG(x): // x is the target node</div>
+1. parent = x.parent
+2. 
+3. IF x is left child
+4.     RIGHT_ROTATE(parent)
+5. ELSE
+6.     LEFT_ROTATE(parent)
+7.
+8. // Now x is at the root
+</div>
+
+<div class="rotation-box">
+  <p><strong>Case 2: Zig-Zig (Node and parent are both left or both right children)</strong></p>
+  <p>Node, parent, and grandparent form a line (straight configuration).</p>
+  <p><strong>When:</strong> x and parent lean the same direction</p>
+  <p><strong>Action:</strong> Rotate parent first, then rotate node</p>
+</div>
+
+<div class="pseudocode">
+<div class="pseudocode-title">ZIG_ZIG(x):</div>
+1. parent = x.parent
+2. grandparent = parent.parent
+3. 
+4. // Both are left children
+5. IF x and parent are both left children
+6.     RIGHT_ROTATE(grandparent)  // Rotate parent up first
+7.     RIGHT_ROTATE(parent)        // Then rotate x up
+8. 
+9. // Both are right children
+10. ELSE IF x and parent are both right children
+11.     LEFT_ROTATE(grandparent)   // Rotate parent up first
+12.     LEFT_ROTATE(parent)         // Then rotate x up
+</div>
+
+<div class="rotation-box">
+  <p><strong>Case 3: Zig-Zag (Node and parent lean in opposite directions)</strong></p>
+  <p>Node, parent, and grandparent form a triangle (zigzag configuration).</p>
+  <p><strong>When:</strong> x is left child and parent is right child, or vice versa</p>
+  <p><strong>Action:</strong> Rotate node up twice (like AVL double rotation)</p>
+</div>
+
+<div class="pseudocode">
+<div class="pseudocode-title">ZIG_ZAG(x):</div>
+1. parent = x.parent
+2. grandparent = parent.parent
+3. 
+4. // x is right child, parent is left child
+5. IF x is right child AND parent is left child
+6.     LEFT_ROTATE(parent)         // Rotate x up to grandparent's left
+7.     RIGHT_ROTATE(grandparent)   // Rotate x up to grandparent's position
+8. 
+9. // x is left child, parent is right child
+10. ELSE IF x is left child AND parent is right child
+11.     RIGHT_ROTATE(parent)        // Rotate x up to grandparent's right
+12.     LEFT_ROTATE(grandparent)    // Rotate x up to grandparent's position
+</div>
+
+<div class="image-placeholder">
+  <strong>IMAGE: Three Splay Cases</strong><br>
+  Three diagrams showing Zig, Zig-Zig, and Zig-Zag<br>
+  Before and after states for each case<br>
+  Arrows showing rotation sequence<br>
+  Color: Blue for target node, Gray for others
+</div>
+
+<h3>Complete Splay Operation</h3>
+
+<div class="pseudocode">
+<div class="pseudocode-title">SPLAY(tree, x):</div>
+1. // Repeatedly apply cases until x reaches root
+2. WHILE x is NOT root
+3.     parent = x.parent
+4.     
+5.     IF parent is root
+6.         ZIG(x)  // Case 1: Single rotation
+7.     ELSE
+8.         grandparent = parent.parent
+9.         
+10.        IF (x and parent same direction)
+11.            ZIG_ZIG(x)  // Case 2: Line configuration
+12.        ELSE
+13.            ZIG_ZAG(x)  // Case 3: Triangle configuration
+14.
+15. // Now x is at the root
+</div>
+
+<div class="key-point">
+  <strong>Why Zig-Zig vs Naive Rotations?</strong> Rotating grandparent before parent (in Zig-Zig) balances the tree better than repeated single rotations. Naive bottom-up rotations can create O(n) depth chains, while proper splaying maintains amortized O(log n) depth.
+</div>
+
+<h2>Splay Tree Operations</h2>
+
+<h3>Search Operation</h3>
+
+<div class="pseudocode">
+<div class="pseudocode-title">SPLAY_SEARCH(tree, key):</div>
+1. // Perform standard BST search
+2. node = BST_SEARCH(tree.root, key)
+3. 
+4. IF node is NULL
+5.     // Key not found - splay the last accessed node
+6.     IF last_node is NOT NULL
+7.         SPLAY(tree, last_node)
+8.     RETURN NULL
+9. 
+10. // Key found - splay it to root
+11. SPLAY(tree, node)
+12. RETURN node
+13.
+14. Amortized Time: O(log n)
+15. Best Case: O(1) if recently accessed
+16. Worst Case: O(n) for single operation (but amortized O(log n))
+</div>
+
+<h3>Insert Operation</h3>
+
+<div class="pseudocode">
+<div class="pseudocode-title">SPLAY_INSERT(tree, key):</div>
+1. // Step 1: Standard BST insertion
+2. IF tree.root is NULL
+3.     tree.root = NEW_NODE(key)
+4.     RETURN
+5. 
+6. new_node = BST_INSERT(tree.root, key)
+7. 
+8. // Step 2: Splay the newly inserted node to root
+9. SPLAY(tree, new_node)
+10.
+11. // Now new_node is at the root
+12. Amortized Time: O(log n)
+</div>
+
+<h3>Delete Operation</h3>
+
+<div class="pseudocode">
+<div class="pseudocode-title">SPLAY_DELETE(tree, key):</div>
+1. // Step 1: Search and splay the key to root
+2. node = SPLAY_SEARCH(tree, key)
+3. 
+4. IF node is NULL
+5.     RETURN  // Key not found
+6. 
+7. // Now node is at root, ready to delete
+8. 
+9. // Step 2: Split tree at root
+10. left_subtree = node.left
+11. right_subtree = node.right
+12. 
+13. // Step 3: Join subtrees
+14. IF left_subtree is NULL
+15.     tree.root = right_subtree
+16. ELSE
+17.     // Find and splay maximum in left subtree
+18.     max_node = FIND_MAX(left_subtree)
+19.     SPLAY(left_subtree, max_node)
+20.     // max_node is now root of left subtree with no right child
+21.     max_node.right = right_subtree
+22.     tree.root = max_node
+23.
+24. Amortized Time: O(log n)
+</div>
+
+<div class="key-point">
+  <strong>Delete Strategy:</strong> After splaying the node to be deleted to root, we split the tree into two subtrees. To join them, we splay the maximum element of the left subtree to the root of that subtree (which has no right child by definition), then attach the right subtree.
+</div>
+
+<h2>Amortized Analysis</h2>
+
+<div class="definition-box">
+  <p><strong>Amortized Complexity:</strong> While a single splay operation can take O(n) time in the worst case (accessing the deepest node in a degenerate tree), any sequence of m operations takes O(m log n) total time.</p>
+  <p><strong>Proof Technique:</strong> Uses potential method showing that expensive operations reduce potential, while cheap operations build it up. The average cost per operation is O(log n).</p>
+</div>
+
+<div class="warning-box">
+  <strong>⚠️ Important Distinction:</strong> Splay trees do NOT guarantee O(log n) per operation. Individual operations can be O(n). However, the amortized cost over m operations is O(log n) per operation. This matters for real-time systems requiring guaranteed response times.
+</div>
+
+<h2>Performance Characteristics</h2>
+
+<table>
+  <tr>
+    <th>Operation</th>
+    <th>Worst Case</th>
+    <th>Amortized</th>
+    <th>Best Case</th>
+  </tr>
+  <tr>
+    <td>Search</td>
+    <td>O(n)</td>
+    <td>O(log n)</td>
+    <td>O(1)</td>
+  </tr>
+  <tr>
+    <td>Insert</td>
+    <td>O(n)</td>
+    <td>O(log n)</td>
+    <td>O(1)</td>
+  </tr>
+  <tr>
+    <td>Delete</td>
+    <td>O(n)</td>
+    <td>O(log n)</td>
+    <td>O(1)</td>
+  </tr>
+  <tr>
+    <td>Space</td>
+    <td>O(n)</td>
+    <td>O(n)</td>
+    <td>O(n)</td>
+  </tr>
+</table>
+
+<h2>Advantages and Disadvantages</h2>
+
+<div class="advantage-box">
+  <p><strong>Advantages:</strong></p>
+  <ul>
+    <li><strong>Simplicity:</strong> No balance factors, colors, or height tracking needed</li>
+    <li><strong>Self-Optimization:</strong> Adapts to access patterns without manual tuning</li>
+    <li><strong>Excellent for Non-Uniform Access:</strong> Hot data stays near root (80/20 rule)</li>
+    <li><strong>Working Set Theorem:</strong> Accessing k distinct items k times takes O(k log k) total</li>
+    <li><strong>Good Cache Performance:</strong> Recently accessed nodes near root (fewer cache misses)</li>
+  </ul>
+</div>
+
+<div class="warning-box">
+  <p><strong>Disadvantages:</strong></p>
+  <ul>
+    <li><strong>No Worst-Case Guarantee:</strong> Individual operations can be O(n)</li>
+    <li><strong>Constant Factor:</strong> More rotations than AVL/RB trees for uniform access</li>
+    <li><strong>Pointer Manipulation:</strong> Every operation modifies tree structure</li>
+    <li><strong>Concurrency Challenges:</strong> Difficult to make thread-safe (entire path changes)</li>
+  </ul>
+</div>
+
+<h2>Real-World Applications</h2>
+
+<div class="comparison-box">
+  <p><strong>Where Splay Trees Excel:</strong></p>
+  <ul>
+    <li><strong>Caching Systems:</strong> LRU-like behavior without explicit LRU overhead</li>
+    <li><strong>Memory Allocators:</strong> Frequently allocated sizes stay near root</li>
+    <li><strong>Compression:</strong> Adaptive Huffman coding uses splay trees</li>
+    <li><strong>Network Routing:</strong> Popular routes become faster to lookup</li>
+    <li><strong>Text Editors:</strong> Recently edited sections quick to access</li>
+    <li><strong>Garbage Collection:</strong> GC in some implementations (e.g., early Java)</li>
+  </ul>
+</div>
+
+<h2>Comparison with Other Balanced Trees</h2>
+
+<table>
+  <tr>
+    <th>Feature</th>
+    <th>Splay Tree</th>
+    <th>AVL Tree</th>
+    <th>Red-Black Tree</th>
+  </tr>
+  <tr>
+    <td>Balance Guarantee</td>
+    <td>Amortized only</td>
+    <td>Strict (height ≤ 1.44 log n)</td>
+    <td>Relaxed (height ≤ 2 log n)</td>
+  </tr>
+  <tr>
+    <td>Rotations per Insert</td>
+    <td>O(log n) amortized</td>
+    <td>≤ 2</td>
+    <td>≤ 2</td>
+  </tr>
+  <tr>
+    <td>Adapts to Access</td>
+    <td>Yes (automatic)</td>
+    <td>No</td>
+    <td>No</td>
+  </tr>
+  <tr>
+    <td>Extra Space</td>
+    <td>None (just pointers)</td>
+    <td>1 int (height)</td>
+    <td>1 bit (color)</td>
+  </tr>
+  <tr>
+    <td>Best For</td>
+    <td>Non-uniform access</td>
+    <td>Lookup-heavy</td>
+    <td>General purpose</td>
+  </tr>
+  <tr>
+    <td>Worst For</td>
+    <td>Hard real-time</td>
+    <td>Insert-heavy</td>
+    <td>Strictly balanced needs</td>
+  </tr>
+</table>
+
+<h2>Advanced Splay Tree Techniques</h2>
+
+<div class="definition-box">
+  <p><strong>Top-Down Splaying:</strong> Instead of bottom-up (search then splay), perform splaying during search. Maintains two auxiliary trees and assembles final tree in one pass. More efficient in practice.</p>
+  <p><strong>Semi-Splaying:</strong> Only splay halfway to root to reduce rotation overhead while maintaining most benefits.</p>
+  <p><strong>Lazy Splaying:</strong> Only splay every k-th access to reduce constant factors.</p>
+</div>
+
+<h2>Implementation Considerations</h2>
+
+<ul>
+  <li><strong>Parent Pointers:</strong> Greatly simplify implementation—store parent reference in each node</li>
+  <li><strong>Sentinel Root:</strong> Use dummy root node to eliminate special cases in rotation code</li>
+  <li><strong>Iterative vs Recursive:</strong> Iterative splaying avoids stack overflow for deep trees</li>
+  <li><strong>Access Counting:</strong> Track access frequency for debugging and analysis</li>
+</ul>
+
+<div class="key-point">
+  <strong>Interview Tip:</strong> When discussing Splay Trees, emphasize the amortized analysis and adaptive nature: "Splay trees trade worst-case guarantees for simplicity and self-optimization. They're ideal when access patterns are non-uniform—the 80/20 rule makes hot data fast without explicit caching logic."
+</div>
+
+<h2>Common Pitfalls</h2>
+
+<ul>
+  <li><strong>Confusing Zig-Zig and Zig-Zag:</strong> Check parent-grandparent alignment carefully</li>
+  <li><strong>Forgetting to Splay on Failed Search:</strong> Should still splay the last accessed node</li>
+  <li><strong>Incorrect Rotation Order:</strong> In Zig-Zig, rotate grandparent before parent</li>
+  <li><strong>Using for Hard Real-Time:</strong> O(n) worst case makes it unsuitable for guaranteed latency</li>
+</ul>
+
+<h2>Summary</h2>
+
+<p>Splay trees represent a different philosophy in balanced tree design: instead of maintaining strict balance invariants, they use a simple self-adjusting heuristic that adapts to access patterns. This makes them simpler to implement than AVL or Red-Black trees while providing excellent performance for real-world workloads with locality of reference. However, the lack of worst-case guarantees means they're not suitable for all applications.</p>
+
+<p>You've now completed the Balanced Trees module, mastering AVL trees (strict balance), Red-Black trees (relaxed balance for fast modifications), B-Trees (disk-optimized multi-way trees), and Splay trees (self-adjusting adaptive trees). Each has its place in the data structures toolkit, and understanding their trade-offs is essential for choosing the right tool for your application.</p>
+
+</body>
+</html>
