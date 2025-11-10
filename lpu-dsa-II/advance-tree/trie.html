@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      line-height: 1.6;
+      color: #2c3e50;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #ffffff;
+    }
+    .lesson-meta {
+      color: #7f8c8d;
+      font-size: 14px;
+      margin-bottom: 8px;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+    }
+    h1 {
+      color: #2c3e50;
+      font-size: 32px;
+      margin: 10px 0 20px 0;
+    }
+    h2 {
+      color: #2c3e50;
+      font-size: 22px;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      border-left: 4px solid #3498db;
+      padding-left: 15px;
+    }
+    h3 {
+      color: #34495e;
+      font-size: 18px;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+    .intro-box {
+      background-color: #ecf0f1;
+      padding: 20px;
+      border-radius: 6px;
+      margin: 20px 0;
+      border-left: 4px solid #3498db;
+    }
+    .definition-box {
+      background-color: #e8f4f8;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #3498db;
+    }
+    .key-point {
+      background-color: #fff9e6;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #f39c12;
+    }
+    .advantage-box {
+      background-color: #e8f8e8;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #27ae60;
+    }
+    .comparison-box {
+      background-color: #f3e5f5;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #9b59b6;
+    }
+    .warning-box {
+      background-color: #ffe6e6;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #e74c3c;
+    }
+    .application-box {
+      background-color: #fff5e6;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      border-left: 4px solid #e67e22;
+    }
+    .image-placeholder {
+      background: #f0f0f0;
+      border: 2px dashed #ccc;
+      padding: 40px;
+      text-align: center;
+      margin: 20px 0;
+      border-radius: 6px;
+      color: #666;
+    }
+    .pseudocode {
+      background: #2c3e50;
+      color: #ecf0f1;
+      padding: 15px 20px;
+      border-radius: 6px;
+      margin: 15px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .pseudocode-title {
+      color: #3498db;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    ul, ol {
+      margin: 15px 0;
+      padding-left: 30px;
+    }
+    li {
+      margin: 8px 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    th, td {
+      border: 1px solid #dee2e6;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #3498db;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f8f9fa;
+    }
+  </style>
+</head>
+<body>
+
+<div class="lesson-meta">
+  Unit 1.3: Advanced Tree Structures | Lesson 1 of 4
+</div>
+
+<h1>Tries (Prefix Trees)</h1>
+
+<div class="intro-box">
+  <p><strong>Tries</strong> (pronounced "try" from re<strong>trie</strong>val) are tree-based data structures specialized for storing and searching strings. Unlike binary search trees that compare entire keys, tries leverage the structure of strings by storing one character per node level, enabling extremely efficient prefix-based operations.</p>
+  
+  <p>Tries power critical applications across the tech industry: Google's autocomplete suggests search queries as you type, smartphone keyboards predict next words, spell checkers validate text in real-time, and IP routing tables direct billions of packets per second. Understanding tries is essential for anyone working with text processing, search systems, or network infrastructure.</p>
+</div>
+
+<h2>Why Tries? The String Search Problem</h2>
+
+<div class="comparison-box">
+  <p><strong>Traditional BST vs Trie for String Storage:</strong></p>
+  <ul>
+    <li><strong>BST Search:</strong> O(m log n) where m = string length, n = number of strings (must compare entire strings)</li>
+    <li><strong>Hash Table:</strong> O(m) average case but no prefix operations, no sorted order</li>
+    <li><strong>Trie Search:</strong> O(m) where m = string length, independent of n! Plus prefix operations in O(m) time</li>
+  </ul>
+</div>
+
+<div class="key-point">
+  <strong>The Trie Advantage:</strong> Search time depends only on the key length, not the number of stored keys. Searching for "apple" takes the same time whether the trie contains 10 words or 10 million words—as long as all words are reasonably short.
+</div>
+
+<h2>Trie Structure and Properties</h2>
+
+<div class="definition-box">
+  <p><strong>Trie Node Structure:</strong></p>
+  <ul>
+    <li>An array/map of child pointers (one for each possible character)</li>
+    <li>A boolean flag indicating whether this node marks the end of a word</li>
+    <li>Optionally: a value/data field for dictionary applications</li>
+  </ul>
+  <p><strong>Key Properties:</strong></p>
+  <ul>
+    <li>Root represents empty string</li>
+    <li>Path from root to a node represents a prefix</li>
+    <li>All descendants of a node share a common prefix</li>
+    <li>Nodes don't store the character they represent (implicit in the edge from parent)</li>
+  </ul>
+</div>
+
+<div class="image-placeholder">
+  <strong>IMAGE: Basic Trie Structure</strong><br>
+  Trie containing words: "cat", "car", "card", "dog", "door"<br>
+  Show root node with branches, intermediate nodes, and end-of-word markers<br>
+  Highlight shared prefixes: "ca" for cat/car/card, "do" for dog/door<br>
+  Color: Blue for nodes, Green circles for end-of-word markers
+</div>
+
+<h2>Trie Node Implementation</h2>
+
+<div class="pseudocode">
+<div class="pseudocode-title">TRIE_NODE Structure:</div>
+1. CLASS TrieNode:
+2.     children = ARRAY[26] of TrieNode  // For lowercase a-z
+3.                 // OR MAP for variable alphabets
+4.     is_end_of_word = False
+5.     value = NULL  // Optional: store associated data
+6.     
+7.     CONSTRUCTOR():
+8.         FOR i = 0 TO 25:
+9.             children[i] = NULL
+10.        is_end_of_word = False
+</div>
+
+<div class="definition-box">
+  <p><strong>Array vs HashMap Children:</strong></p>
+  <ul>
+    <li><strong>Array (fixed alphabet):</strong> O(1) access, but wastes space if alphabet is large or sparse</li>
+    <li><strong>HashMap:</strong> O(1) average access, space-efficient for large alphabets (Unicode, special characters)</li>
+    <li><strong>Compressed Trie:</strong> Store character ranges to reduce space (advanced optimization)</li>
+  </ul>
+</div>
+
+<h2>Core Trie Operations</h2>
+
+<h3>1. Insert Operation</h3>
+
+<div class="pseudocode">
+<div class="pseudocode-title">TRIE_INSERT(root, word):</div>
+1. node = root
+2. 
+3. // Traverse/create path for each character
+4. FOR each character ch in word:
+5.     index = ch - 'a'  // Convert to index (0-25)
+6.     
+7.     // Create node if doesn't exist
+8.     IF node.children[index] is NULL:
+9.         node.children[index] = NEW TrieNode()
+10.    
+11.    // Move to child node
+12.    node = node.children[index]
+13.
+14. // Mark end of word
+15. node.is_end_of_word = True
+16.
+17. Time Complexity: O(m) where m = word length
+18. Space Complexity: O(m) for new nodes (worst case)
+</div>
+
+<h3>2. Search Operation</h3>
+
+<div class="pseudocode">
+<div class="pseudocode-title">TRIE_SEARCH(root, word):</div>
+1. node = root
+2. 
+3. // Traverse the trie following the word
+4. FOR each character ch in word:
+5.     index = ch - 'a'
+6.     
+7.     // Character path doesn't exist
+8.     IF node.children[index] is NULL:
+9.         RETURN False
+10.    
+11.    node = node.children[index]
+12.
+13. // Check if this is actually a complete word
+14. RETURN node.is_end_of_word
+15.
+16. Time Complexity: O(m)
+17. Space Complexity: O(1)
+</div>
+
+<div class="key-point">
+  <strong>Important:</strong> Finding the path to "car" in a trie containing "card" reaches a valid node, but must check <code>is_end_of_word</code> to confirm "car" was actually inserted. Otherwise, we'd incorrectly return true for any prefix.
+</div>
+
+<h3>3. Prefix Search (StartsWith)</h3>
+
+<div class="pseudocode">
+<div class="pseudocode-title">STARTS_WITH(root, prefix):</div>
+1. node = root
+2. 
+3. // Traverse the trie following the prefix
+4. FOR each character ch in prefix:
+5.     index = ch - 'a'
+6.     
+7.     IF node.children[index] is NULL:
+8.         RETURN False
+9.     
+10.    node = node.children[index]
+11.
+12. // If we reached here, prefix exists
+13. RETURN True
+14.
+15. Time Complexity: O(m) where m = prefix length
+16. 
+17. // Find all words with this prefix
+18. GET_ALL_WORDS_WITH_PREFIX(root, prefix):
+19.     node = NAVIGATE_TO_PREFIX(root, prefix)
+20.     IF node is NULL: RETURN []
+21.     RETURN DFS_COLLECT_WORDS(node, prefix)
+</div>
+
+<h3>4. Delete Operation</h3>
+
+<div class="pseudocode">
+<div class="pseudocode-title">TRIE_DELETE(root, word):</div>
+1. // Helper function to recursively delete
+2. DELETE_HELPER(node, word, index):
+3.     IF index == length(word):
+4.         // Reached end of word
+5.         IF NOT node.is_end_of_word:
+6.             RETURN False  // Word doesn't exist
+7.         
+8.         node.is_end_of_word = False
+9.         
+10.        // Return True if node has no children (can be deleted)
+11.        RETURN node.has_no_children()
+12.    
+13.    ch = word[index]
+14.    child_index = ch - 'a'
+15.    
+16.    IF node.children[child_index] is NULL:
+17.        RETURN False  // Word doesn't exist
+18.    
+19.    should_delete_child = DELETE_HELPER(node.children[child_index], 
+20.                                         word, index + 1)
+21.    
+22.    IF should_delete_child:
+23.        node.children[child_index] = NULL
+24.        // Delete this node if it's not end of another word
+25.        // and has no other children
+26.        RETURN NOT node.is_end_of_word AND node.has_no_children()
+27.    
+28.    RETURN False
+29.
+30. Time Complexity: O(m)
+</div>
+
+<div class="warning-box">
+  <strong>⚠️ Deletion Challenge:</strong> Must carefully handle shared prefixes. Deleting "card" from a trie containing {"car", "card", "care"} should only remove the node marking "card" as complete, not any shared prefix nodes needed by other words.
+</div>
+
+<h2>Space Complexity Analysis</h2>
+
+<div class="definition-box">
+  <p><strong>Worst Case Space:</strong> O(ALPHABET_SIZE × N × M)</p>
+  <ul>
+    <li>N = number of words</li>
+    <li>M = average length of words</li>
+    <li>ALPHABET_SIZE = size of character set (26 for lowercase English)</li>
+  </ul>
+  <p><strong>Best Case Space:</strong> O(N × M) when words share many prefixes</p>
+  <p><strong>Example:</strong> 1000 words of length 10, no shared prefixes = 10,000 nodes × 26 pointers = 260,000 pointers (mostly NULL)</p>
+</div>
+
+<div class="warning-box">
+  <strong>⚠️ Space Trade-off:</strong> Tries can be memory-intensive due to sparse pointer arrays. For large alphabets or memory-constrained systems, consider compressed tries, ternary search trees, or radix trees as alternatives.
+</div>
+
+<h2>Advanced Trie Variants</h2>
+
+<h3>Compressed Trie (Radix Tree)</h3>
+
+<div class="definition-box">
+  <p><strong>Optimization:</strong> Merge nodes with single children into one node storing a string instead of a single character.</p>
+  <p><strong>Example:</strong> Path for "test" with only this word: Instead of 4 nodes (t→e→s→t), store one node with "test"</p>
+  <p><strong>Use Case:</strong> IP routing, where long common prefixes waste space</p>
+</div>
+
+<h3>Ternary Search Tree (TST)</h3>
+
+<div class="definition-box">
+  <p><strong>Hybrid Approach:</strong> Each node has three children: left (less), middle (equal), right (greater)</p>
+  <p><strong>Advantage:</strong> Space-efficient like BST but supports prefix operations like Trie</p>
+  <p><strong>Complexity:</strong> O(m log n) search time but uses much less space</p>
+</div>
+
+<h2>Real-World Applications</h2>
+
+<div class="application-box">
+  <p><strong>1. Autocomplete Systems</strong></p>
+  <p>Google Search, IDE code completion, smartphone keyboards all use tries to suggest completions as you type. As you type "pro", the system instantly retrieves all words starting with "pro" by traversing to that prefix node and collecting all descendant words.</p>
+</div>
+
+<div class="application-box">
+  <p><strong>2. Spell Checkers</strong></p>
+  <p>Word processors use tries to validate spelling. For suggestions, they search nearby words using edit distance algorithms (add/delete/substitute characters) combined with trie traversal for efficient candidate generation.</p>
+</div>
+
+<div class="application-box">
+  <p><strong>3. IP Routing (Longest Prefix Match)</strong></p>
+  <p>Internet routers use tries to match IP addresses to routing entries. For IP 192.168.1.5, the router finds the longest matching prefix in its routing table using a trie traversal, enabling billions of packet forwarding decisions per second.</p>
+</div>
+
+<div class="application-box">
+  <p><strong>4. Dictionary Implementation</strong></p>
+  <p>T9 predictive text, contact search in phones, and command-line completion all leverage tries for fast prefix matching and word lookup.</p>
+</div>
+
+<h2>Performance Comparison</h2>
+
+<table>
+  <tr>
+    <th>Operation</th>
+    <th>Trie</th>
+    <th>BST</th>
+    <th>Hash Table</th>
+  </tr>
+  <tr>
+    <td>Insert</td>
+    <td>O(m)</td>
+    <td>O(m log n)</td>
+    <td>O(m)</td>
+  </tr>
+  <tr>
+    <td>Search</td>
+    <td>O(m)</td>
+    <td>O(m log n)</td>
+    <td>O(m)</td>
+  </tr>
+  <tr>
+    <td>Delete</td>
+    <td>O(m)</td>
+    <td>O(m log n)</td>
+    <td>O(m)</td>
+  </tr>
+  <tr>
+    <td>Prefix Search</td>
+    <td>O(m + k)</td>
+    <td>O(n)</td>
+    <td>Not supported</td>
+  </tr>
+  <tr>
+    <td>Sorted Order</td>
+    <td>Yes (DFS)</td>
+    <td>Yes (Inorder)</td>
+    <td>No</td>
+  </tr>
+  <tr>
+    <td>Space</td>
+    <td>O(ALPHABET × N × M)</td>
+    <td>O(N × M)</td>
+    <td>O(N × M)</td>
+  </tr>
+</table>
+
+<p style="margin-top: 10px;"><em>m = key length, n = number of keys, k = size of result set</em></p>
+
+<h2>Optimization Techniques</h2>
+
+<div class="advantage-box">
+  <p><strong>1. Use HashMap for Large Alphabets:</strong> Unicode, emojis, or variable character sets benefit from hash-based children instead of fixed arrays.</p>
+  <p><strong>2. Lazy Deletion:</strong> Instead of removing nodes, mark them as deleted. Periodically rebuild the trie to reclaim space.</p>
+  <p><strong>3. Path Compression:</strong> Merge single-child chains into nodes storing strings (Radix Tree).</p>
+  <p><strong>4. Alphabet Reduction:</strong> Map similar characters together (case-insensitive search, accent removal).</p>
+  <p><strong>5. Frequency-Based Pruning:</strong> In autocomplete, store word frequencies and only return top-k suggestions.</p>
+</div>
+
+<h2>Common Interview Problems</h2>
+
+<ul>
+  <li><strong>Implement Trie (Insert, Search, StartsWith):</strong> LeetCode #208 - Classic implementation problem</li>
+  <li><strong>Word Search II:</strong> Find all words from dictionary on a board using trie + backtracking</li>
+  <li><strong>Replace Words:</strong> Use trie to replace words with their shortest root form</li>
+  <li><strong>Autocomplete System:</strong> Design search autocomplete with ranking</li>
+  <li><strong>Longest Word in Dictionary:</strong> Use trie to build word letter by letter</li>
+  <li><strong>Add and Search Word:</strong> Support wildcards (.) in search operations</li>
+</ul>
+
+<div class="key-point">
+  <strong>Interview Tip:</strong> When discussing tries, emphasize prefix-based efficiency: "Unlike hash tables that only support exact match, tries excel at prefix queries in O(m) time. This makes them ideal for autocomplete where we need all words starting with a given prefix."
+</div>
+
+<h2>When to Use Tries</h2>
+
+<div class="comparison-box">
+  <p><strong>Use Tries When:</strong></p>
+  <ul>
+    <li>Need prefix-based queries (autocomplete, search suggestions)</li>
+    <li>Dictionary with many words sharing common prefixes</li>
+    <li>Implementing spell checkers or word games</li>
+    <li>IP routing and longest prefix matching</li>
+    <li>Fixed or reasonable-sized alphabet</li>
+  </ul>
+  
+  <p><strong>Avoid Tries When:</strong></p>
+  <ul>
+    <li>Only need exact key lookup (hash table is simpler)</li>
+    <li>Very large alphabet (memory overhead becomes problematic)</li>
+    <li>Few common prefixes (wasted space)</li>
+    <li>Memory is severely constrained</li>
+  </ul>
+</div>
+
+<h2>Implementation Pitfalls</h2>
+
+<ul>
+  <li><strong>Forgetting End-of-Word Flag:</strong> Must distinguish complete words from prefixes</li>
+  <li><strong>Array Bounds:</strong> Always validate character is within alphabet range before indexing</li>
+  <li><strong>Memory Leaks:</strong> Properly deallocate nodes during deletion in languages without GC</li>
+  <li><strong>Case Sensitivity:</strong> Decide early whether "Apple" and "apple" are different</li>
+  <li><strong>Empty String Handling:</strong> Define behavior for inserting/searching empty strings</li>
+</ul>
+
+<h2>Summary</h2>
+
+<p>Tries are specialized tree structures that trade space for speed in string operations. Their true power lies in prefix-based queries—operations that are inefficient or impossible with hash tables and BSTs. While they can be memory-intensive, their O(m) lookup time independent of dataset size makes them indispensable for autocomplete, spell checking, and other text-processing applications where prefix matching is critical.</p>
+
+<p>Next, you'll explore <strong>Segment Trees</strong>, another advanced tree structure that enables efficient range queries and updates—essential for problems involving intervals, ranges, and aggregate computations.</p>
+
+</body>
+</html>
